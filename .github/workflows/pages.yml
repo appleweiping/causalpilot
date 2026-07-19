@@ -1,0 +1,60 @@
+name: Deploy static control room
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/configure-pages@v5
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+      - name: Audit all installed dependencies
+        working-directory: frontend
+        run: npm audit --audit-level=high
+      - name: Export static demo
+        working-directory: frontend
+        env:
+          STATIC_EXPORT: "true"
+          BASE_PATH: /causalpilot
+          NEXT_PUBLIC_API_BASE_URL: offline
+        run: npm run build
+      - name: Disable Jekyll processing
+        run: touch frontend/out/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

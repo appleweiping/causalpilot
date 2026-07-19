@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.tox/
+.nox/
+
+# JavaScript
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Generated data and local caches
+data/raw/
+data/processed/
+docs/assets/video-temp/
+*.log
+*.duckdb
+*.sqlite3
+.cache/
+
+# LaTeX intermediates (the source and rendered PDF stay versioned)
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.run.xml
+paper/*.synctex.gz
+
+# Local credentials and private keys
+*.pem
+*.key
+*.p12
+*.pfx
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Playwright local output
+test-results/
+playwright-report/
+blob-report/
