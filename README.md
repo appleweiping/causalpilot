@@ -27,6 +27,7 @@ Run the same file with `--peeking` (because, honestly, you looked every morning)
 ```text
   -> HOLD: The test cannot detect a worthwhile effect on converted at this traffic.
      The always-valid 95% interval -0.22 pp to +1.16 pp contains zero and is too wide to rule out the smallest change you said is worth shipping (+0.18 pp).
+     Detecting that change with 80% power would need about 13x the current sample, which is beyond the --max-extend limit.
 ```
 
 ![The browser version on the synthetic example](docs/web-demo.png)
@@ -128,7 +129,7 @@ To check the rules do what they claim, `benchmark/run_benchmark.py` simulates 20
 | worthwhile (+15%) | p < 0.05, one look | 100.0% | 14.0 |
 | worthwhile (+15%) | causalpilot `--peeking`, checked daily | 95.5% | 7.3 |
 
-Daily peeking at p-values ships a change that does nothing about one time in nine; the always-valid interval keeps that near zero and still finds the real win, usually in half the time. The logging bug fools a plain significance test two times out of three and is caught every time by the sample ratio check. The price is visible in the full table: with daily checks and no effect, 84% of tests end in EXTEND because the always-valid interval is too wide to rule out a 10% lift by day 14.
+Daily peeking at p-values ships a change that does nothing about one time in nine; the always-valid interval keeps that near zero and still finds the real win, usually in half the time. The logging bug fools a plain significance test two times out of three. The sample ratio check catches it every time with one look, and in 99% of runs with daily checks; the other 1% shipped on an early day, before the missing users added up to a detectable mismatch. The price is visible in the full table: with daily checks and no effect, 84% of tests end in EXTEND because the always-valid interval is too wide to rule out a 10% lift by day 14.
 
 Reproduce with `python benchmark/run_benchmark.py` (about 10 minutes on one core; `--runs 20` for a quick check).
 
