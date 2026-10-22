@@ -271,8 +271,15 @@ export function decide({
     ]);
   }
   if (harmedGuardrails.length) {
-    const names = harmedGuardrails.join(", ");
-    return v("hold", `The change clearly hurts a guardrail metric (${names}).`, [`The interval for ${names} lies entirely below zero.`]);
+    // Each entry: { metric, ciLow, ciHigh, lowerIsBetter, unit } for a guardrail that clearly moved the wrong way.
+    const names = harmedGuardrails.map((g) => g.metric).join(", ");
+    const reasons = harmedGuardrails.map((g) => {
+      const gSpan = `${intervalName} ${fmt(g.ciLow, g.unit)} to ${fmt(g.ciHigh, g.unit)}`;
+      return g.lowerIsBetter
+        ? `${g.metric} went up, and lower is better: the ${gSpan} lies entirely above zero.`
+        : `${g.metric} went down, and higher is better: the ${gSpan} lies entirely below zero.`;
+    });
+    return v("hold", `The change clearly hurts a guardrail metric (${names}).`, reasons);
   }
   if (ciHigh < 0) return v("hold", `The treatment makes ${metric} worse.`, [`The whole ${span} is below zero.`]);
   if (ciLow > 0) {
@@ -394,13 +401,23 @@ export function parseSplit(text, groups) {
   return Object.fromEntries(groups.map((g, i) => [g, values[i]]));
 }
 
+// "refunded:lower" -> ["refunded", true]: lower is better, so a clear rise blocks a ship.
+// No suffix (or ":higher") means higher is better, so a clear drop does.
+export function parseGuardrail(spec) {
+  const at = spec.lastIndexOf(":");
+  const direction = at >= 0 ? spec.slice(at + 1).trim().toLowerCase() : "";
+  if (direction === "lower" || direction === "higher") return [spec.slice(0, at).trim(), direction === "lower"];
+  return [spec.trim(), false];
+}
+
 export function analyze(data, s) {
   const settings = {
     treatments: null, covariates: [], guardrails: [], split: null, alpha: 0.05, minLift: 0.01,
     peeking: false, plannedN: null, srmAlpha: 0.001, maxExtend: 4, ...s,
   };
+  const guardrails = new Map(settings.guardrails.map(parseGuardrail));
   const { columns } = data;
-  const needed = [settings.group, ...settings.metrics, ...settings.covariates, ...settings.guardrails];
+  const needed = [settings.group, ...settings.metrics, ...settings.covariates, ...guardrails.keys()];
   const missingCols = needed.filter((c) => !(c in columns));
   if (missingCols.length) throw new Error(`missing column(s) ${missingCols.join(", ")}`);
 
@@ -420,7 +437,7 @@ export function analyze(data, s) {
   const split = parseSplit(settings.split, ordered) || Object.fromEntries(groups.map((g) => [g, 1]));
   const srm = sampleRatioTest(observed, split);
 
-  const metricNames = [...new Set([...settings.metrics, ...settings.guardrails])];
+  const metricNames = [...new Set([...settings.metrics, ...guardrails.keys()])];
   const numeric = {};
   for (const m of metricNames) numeric[m] = toNumber(rowIndex.map((i) => columns[m][i]), m);
   const cov = covariateMatrix(columns, settings.covariates, rowIndex);
@@ -479,10 +496,14 @@ export function analyze(data, s) {
     const factor = sampleSizeFactor(chosen.se, minEffect, settings.alpha);
     const nPrimary = primary.n_treatment + primary.n_control;
     const stillRunning = Boolean(settings.plannedN && nPrimary < settings.plannedN);
-    const harmed = settings.guardrails.filter((g) => {
-      const r = results[g], e = r.cuped || r.raw;
-      return (settings.peeking ? r.always_valid.ci_high : e.ci_high) < 0;
-    });
+    const harmed = [];
+    for (const [g, lowerIsBetter] of guardrails) {
+      const r = results[g];
+      const e = settings.peeking ? r.always_valid : r.cuped || r.raw;
+      if (lowerIsBetter ? e.ci_low > 0 : e.ci_high < 0) {
+        harmed.push({ metric: g, ciLow: e.ci_low, ciHigh: e.ci_high, lowerIsBetter, unit: r.binary ? "%" : "" });
+      }
+    }
     const verdict = decide({
       metric: primary.metric, effect: chosen.effect, ciLow: lo, ciHigh: hi, minEffect, srmP: srm.p_value,
       srmAlpha: settings.srmAlpha, sampleFactor: factor, maxExtend: stillRunning ? Infinity : settings.maxExtend,
@@ -497,6 +518,11 @@ export function analyze(data, s) {
         `for a stricter family-wide error rate use --alpha ${formatG(settings.alpha / treatments.length, 3)}.`,
     );
   }
+  if (guardrails.size) {
+    const rules = [...guardrails].map(([name, lower]) =>
+      lower ? `${name} must not go up (lower is better)` : `${name} must not go down (higher is better)`);
+    notes.push(`Guardrails, where a clear move the wrong way blocks a ship: ${rules.join("; ")}.`);
+  }
   if (!settings.peeking) {
     notes.push(
       "These intervals assume the sample size was fixed in advance and the results were read once. If you checked " +
@@ -508,7 +534,10 @@ export function analyze(data, s) {
     notes.push(`CUPED is only unbiased if the covariates were measured before assignment (${settings.covariates.join(", ")}).`);
   }
   return {
-    settings: { ...settings, treatments, covariate_columns: cov.labels, split },
+    settings: {
+      ...settings, treatments, covariate_columns: cov.labels, split,
+      guardrails: [...guardrails].map(([metric, lower]) => ({ metric, lower_is_better: lower })),
+    },
     rows: rowIndex.length, srm, comparisons, notes,
   };
 }

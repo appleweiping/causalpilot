@@ -10,5 +10,15 @@
   {
     "name": "unequal_split_alpha",
     "settings": {"group": "arm", "control": "control", "metrics": ["converted"], "covariates": ["prior_orders"], "split": "60:40", "alpha": 0.1, "min_lift": 0.02}
+  },
+  {
+    "name": "refunds_rise_lower_is_better",
+    "csv": "refunds.csv",
+    "settings": {"group": "arm", "control": "control", "metrics": ["converted"], "guardrails": ["refunded:lower"], "min_lift": 0.05}
+  },
+  {
+    "name": "refunds_rise_lower_is_better_peeking",
+    "csv": "refunds.csv",
+    "settings": {"group": "arm", "control": "control", "metrics": ["converted"], "guardrails": ["refunded:lower", "converted:higher"], "min_lift": 0.05, "peeking": true}
   }
 ]

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Guardrails take a direction. `--guardrail refunded:lower` blocks a ship when refunds
+  clearly go up; before, every guardrail was treated as higher-is-better, so a rise in
+  refunds could never block a ship and a drop would. The browser version has a direction
+  menu next to each guardrail, and the report lists the direction it used.
+
 ## 0.2.0 (2026-10-22)
 
 Rewritten as a practical A/B test checker.

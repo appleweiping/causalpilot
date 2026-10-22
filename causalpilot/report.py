@@ -68,6 +68,15 @@ def to_markdown(result: dict, chart_name: str | None = None) -> str:
         f"Smallest worthwhile lift: {s['min_lift'] * 100:g}% of the control mean. "
         f"Alpha: {s['alpha']}."
         + (f" Covariates for CUPED: {', '.join(s['covariates'])}." if s["covariates"] else "")
+        + (
+            " Guardrails: "
+            + ", ".join(
+                f"{g['metric']} ({'lower' if g['lower_is_better'] else 'higher'} is better)" for g in s["guardrails"]
+            )
+            + "."
+            if s.get("guardrails")
+            else ""
+        )
     )
     out.append("")
     out.append("## Verdict")

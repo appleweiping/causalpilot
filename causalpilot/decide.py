@@ -8,8 +8,19 @@ that should come before any effect is read: the sample ratio and the guardrails.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from typing import NamedTuple
 
 SHIP, HOLD, EXTEND = "ship", "hold", "extend"
+
+
+class GuardrailHarm(NamedTuple):
+    """A guardrail whose interval lies entirely on the wrong side of zero."""
+
+    metric: str
+    ci_low: float
+    ci_high: float
+    lower_is_better: bool = False
+    unit: str = ""
 
 
 @dataclass(frozen=True)
@@ -39,7 +50,7 @@ def decide(
     srm_alpha: float = 0.001,
     sample_factor: float | None = None,
     max_extend: float = 4.0,
-    harmed_guardrails: tuple[str, ...] = (),
+    harmed_guardrails: tuple[GuardrailHarm, ...] = (),
     interval_name: str = "95% interval",
     unit: str = "",
 ) -> Verdict:
@@ -48,7 +59,9 @@ def decide(
     `min_effect` is the smallest absolute change worth shipping (in metric units).
     `sample_factor` is how many times the current sample would be needed to detect
     `min_effect` with 80% power; it decides between "extend" and "hold" when the
-    interval is inconclusive.
+    interval is inconclusive. `harmed_guardrails` are the guardrails that clearly
+    moved the wrong way (down for a higher-is-better metric, up for a
+    lower-is-better one such as refunds); any of them blocks a ship.
     """
     span = f"{interval_name} {_fmt(ci_low, unit)} to {_fmt(ci_high, unit)}"
     bar = f"the smallest change you said is worth shipping ({_fmt(min_effect, unit)})"
@@ -65,12 +78,15 @@ def decide(
             ],
         )
     if harmed_guardrails:
-        names = ", ".join(harmed_guardrails)
-        return Verdict(
-            HOLD,
-            f"The change clearly hurts a guardrail metric ({names}).",
-            [f"The interval for {names} lies entirely below zero."],
-        )
+        names = ", ".join(g.metric for g in harmed_guardrails)
+        reasons = []
+        for g in harmed_guardrails:
+            g_span = f"{interval_name} {_fmt(g.ci_low, g.unit)} to {_fmt(g.ci_high, g.unit)}"
+            if g.lower_is_better:
+                reasons.append(f"{g.metric} went up, and lower is better: the {g_span} lies entirely above zero.")
+            else:
+                reasons.append(f"{g.metric} went down, and higher is better: the {g_span} lies entirely below zero.")
+        return Verdict(HOLD, f"The change clearly hurts a guardrail metric ({names}).", reasons)
     if ci_high < 0:
         return Verdict(
             HOLD,

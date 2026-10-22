@@ -52,13 +52,13 @@ causalpilot analyze export.csv \
   --group variant --control A \
   --metric purchased --metric revenue \
   --covariate orders_last_90d --covariate country \
-  --guardrail refunded \
+  --guardrail refunded:lower \
   --min-lift 0.02 --split 50:50 \
   --out report/
 ```
 
 - The first `--metric` decides the call; the others are reported alongside it.
-- `--guardrail` metrics must not get significantly worse.
+- `--guardrail` metrics must not get clearly worse. Higher counts as better unless you add `:lower`, so write `refunded:lower` for refunds, cancellations, errors or anything else where a rise is bad. The browser version has a direction menu next to each guardrail.
 - `--min-lift` is the smallest relative lift worth shipping (0.02 = 2% of the control mean; default 1%).
 - `--split` is the planned split, control first (default: equal).
 - `--out` writes `report.md`, `report.json` and `effects.png`; `--json` prints everything the report is built from.
@@ -100,7 +100,7 @@ The data is not redistributed in this repository.
 2. **The effect.** Treatment minus control with a Welch standard error and a normal-approximation interval, plus the relative lift with a delta-method interval.
 3. **CUPED** ([Deng et al., 2013](https://exp-platform.com/Documents/2013-02-CUPED-ImprovingSensitivityOfControlledExperiments.pdf)). Each user's metric minus the part predicted by the pre-experiment covariates (pooled least squares; text columns are one-hot encoded). The estimate stays unbiased because the covariates were fixed before assignment; the interval gets narrower by however much variance the covariates explain.
 4. **Peeking.** Fixed-horizon intervals are only valid if you look once. The always-valid interval is the asymptotic confidence sequence from [Waudby-Smith et al. (2021)](https://arxiv.org/abs/2103.06476), applied to the difference in means. It is wider, but you may look as often as you like.
-5. **Guardrails.** A guardrail metric whose interval is entirely below zero blocks a ship.
+5. **Guardrails.** A guardrail whose interval lies entirely on the wrong side of zero blocks a ship: below zero for a metric where higher is better, above zero for one marked `:lower` (refunds went up).
 6. **The call**, following the practical-significance table in Kohavi, Tang and Xu, *Trustworthy Online Controlled Experiments* (2020), ch. 2:
 
 | Interval of the primary metric | Call |

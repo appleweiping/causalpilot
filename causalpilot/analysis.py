@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from . import stats
-from .decide import decide
+from .decide import GuardrailHarm, decide
 
 _TRUE = {"true", "yes", "y", "t", "1"}
 _FALSE = {"false", "no", "n", "f", "0"}
@@ -22,6 +22,7 @@ class Settings:
     metrics: list[str]
     treatments: list[str] | None = None
     covariates: list[str] = field(default_factory=list)
+    # Column names; add ":lower" when a rise is bad (refunds, cancellations, errors).
     guardrails: list[str] = field(default_factory=list)
     split: str | None = None
     alpha: float = 0.05
@@ -50,6 +51,19 @@ def parse_split(text: str | None, groups: list[str]) -> dict[str, float] | None:
     if len(values) != len(groups):
         raise ValueError(f"--split has {len(values)} parts but there are {len(groups)} groups: {groups}")
     return dict(zip(groups, values))
+
+
+def parse_guardrail(spec: str) -> tuple[str, bool]:
+    """Split "refunded:lower" into ("refunded", True).
+
+    The suffix says which direction is bad: ":lower" means lower is better, so a
+    clear rise blocks a ship; ":higher" (the default) means a clear drop does.
+    """
+    name, sep, direction = spec.rpartition(":")
+    direction = direction.strip().lower()
+    if sep and direction in ("lower", "higher"):
+        return name.strip(), direction == "lower"
+    return spec.strip(), False
 
 
 def _to_number(series: pd.Series, name: str) -> pd.Series:
@@ -97,9 +111,10 @@ def _is_binary(values: np.ndarray) -> bool:
 
 def analyze_frame(frame: pd.DataFrame, settings: Settings) -> dict:
     """Analyze a data frame with one row per user (or per randomization unit)."""
+    guardrails = dict(parse_guardrail(g) for g in settings.guardrails)
     missing = [
         c
-        for c in [settings.group, *settings.metrics, *settings.covariates, *settings.guardrails]
+        for c in [settings.group, *settings.metrics, *settings.covariates, *guardrails]
         if c not in frame.columns
     ]
     if missing:
@@ -131,7 +146,7 @@ def analyze_frame(frame: pd.DataFrame, settings: Settings) -> dict:
         raise ValueError(f"--split must cover every group in the file: {groups}")
     srm = stats.sample_ratio_test(observed, split)
 
-    numeric = {m: _to_number(frame[m], m) for m in dict.fromkeys(settings.metrics + settings.guardrails)}
+    numeric = {m: _to_number(frame[m], m) for m in dict.fromkeys([*settings.metrics, *guardrails])}
     x_all, covariate_names, filled = _covariate_matrix(frame, settings.covariates)
     arm = frame[settings.group].to_numpy()
     control_mask = arm == settings.control
@@ -199,12 +214,14 @@ def analyze_frame(frame: pd.DataFrame, settings: Settings) -> dict:
         n_primary = primary["n_treatment"] + primary["n_control"]
         still_running = bool(settings.planned_n and n_primary < settings.planned_n)
         harmed = []
-        for guardrail in settings.guardrails:
+        for guardrail, lower_is_better in guardrails.items():
             g_row = results[guardrail]
-            g_est = g_row["cuped"] or g_row["raw"]
-            g_high = g_row["always_valid"]["ci_high"] if settings.peeking else g_est["ci_high"]
-            if g_high < 0:
-                harmed.append(guardrail)
+            g_est = g_row["always_valid"] if settings.peeking else (g_row["cuped"] or g_row["raw"])
+            g_low, g_high = g_est["ci_low"], g_est["ci_high"]
+            if (g_low > 0) if lower_is_better else (g_high < 0):
+                harmed.append(
+                    GuardrailHarm(guardrail, g_low, g_high, lower_is_better, "%" if g_row["binary"] else "")
+                )
         verdict = decide(
             metric=primary["metric"],
             effect=chosen["effect"],
@@ -236,6 +253,12 @@ def analyze_frame(frame: pd.DataFrame, settings: Settings) -> dict:
             f"a separate {100 * (1 - settings.alpha):.0f}% interval; for a stricter family-wide "
             f"error rate use --alpha {settings.alpha / len(treatments):.3g}."
         )
+    if guardrails:
+        rules = "; ".join(
+            f"{name} must not go up (lower is better)" if lower else f"{name} must not go down (higher is better)"
+            for name, lower in guardrails.items()
+        )
+        notes.append(f"Guardrails, where a clear move the wrong way blocks a ship: {rules}.")
     if not settings.peeking:
         notes.append(
             "These intervals assume the sample size was fixed in advance and the results were "
@@ -257,7 +280,7 @@ def analyze_frame(frame: pd.DataFrame, settings: Settings) -> dict:
             "primary_metric": settings.metrics[0],
             "covariates": settings.covariates,
             "covariate_columns": covariate_names,
-            "guardrails": settings.guardrails,
+            "guardrails": [{"metric": name, "lower_is_better": lower} for name, lower in guardrails.items()],
             "alpha": settings.alpha,
             "min_lift": settings.min_lift,
             "peeking": settings.peeking,

@@ -7,7 +7,8 @@ import { test } from "node:test";
 import { analyze, chi2Sf, formatG, parseCsv, zCritical } from "../causalpilot.js";
 
 const here = new URL(".", import.meta.url);
-const csv = parseCsv(readFileSync(new URL("../synthetic_example.csv", here), "utf-8"));
+const load = (url) => parseCsv(readFileSync(url, "utf-8"));
+const example = load(new URL("../synthetic_example.csv", here));
 const cases = JSON.parse(readFileSync(new URL("cases.json", here), "utf-8"));
 const expected = JSON.parse(readFileSync(new URL("expected.json", here), "utf-8"));
 
@@ -34,6 +35,7 @@ function compareNumbers(actual, wanted, path) {
 
 for (const c of cases) {
   test(`same result as Python: ${c.name}`, () => {
+    const csv = c.csv ? load(new URL(c.csv, here)) : example;
     const js = analyze(csv, camel(c.settings));
     const py = expected[c.name];
     assert.equal(js.rows, py.rows);

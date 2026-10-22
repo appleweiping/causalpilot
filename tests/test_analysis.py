@@ -1,8 +1,9 @@
+import numpy as np
 import pandas as pd
 import pytest
 
 from causalpilot import Settings, analyze_frame
-from causalpilot.analysis import parse_split
+from causalpilot.analysis import parse_guardrail, parse_split
 from causalpilot.simulate import simulate
 
 
@@ -45,6 +46,43 @@ def test_peeking_uses_wider_interval():
     assert m["always_valid"]["ci_low"] < m["cuped"]["ci_low"]
     assert "--peeking" in " ".join(fixed["notes"])
     assert "always-valid" in " ".join(peek["comparisons"][0]["verdict"]["reasons"])
+
+
+def _with_refunds(frame, control_rate, treatment_rate, seed):
+    rng = np.random.default_rng(seed)
+    rate = np.where(frame["arm"] == "treatment", treatment_rate, control_rate)
+    return frame.assign(refunded=(rng.random(len(frame)) < rate).astype(int))
+
+
+def test_rising_lower_is_better_guardrail_blocks_a_win():
+    # Conversion clearly improves, but refunds triple.
+    frame = _with_refunds(simulate(n=40_000, true_lift=0.25, seed=7), 0.012, 0.037, seed=8)
+    result = analyze_frame(frame, settings(guardrails=["refunded:lower"]))
+    verdict = result["comparisons"][0]["verdict"]
+    assert verdict["call"] == "hold"
+    assert "(refunded)" in verdict["headline"]
+    assert "refunded went up, and lower is better" in verdict["reasons"][0]
+    assert result["settings"]["guardrails"] == [{"metric": "refunded", "lower_is_better": True}]
+    assert any("refunded must not go up" in n for n in result["notes"])
+    # The same rise is not a harm for a guardrail where higher is better.
+    unchanged = analyze_frame(frame, settings(guardrails=["refunded"]))
+    assert unchanged["comparisons"][0]["verdict"]["call"] == "ship"
+
+
+def test_falling_lower_is_better_guardrail_does_not_block():
+    frame = _with_refunds(simulate(n=40_000, true_lift=0.25, seed=7), 0.037, 0.012, seed=8)
+    result = analyze_frame(frame, settings(guardrails=["refunded:lower"]))
+    assert result["comparisons"][0]["verdict"]["call"] == "ship"
+    with_peeking = analyze_frame(frame, settings(guardrails=["refunded:lower"], peeking=True))
+    assert with_peeking["comparisons"][0]["verdict"]["call"] == "ship"
+
+
+def test_guardrail_direction_parsing():
+    assert parse_guardrail("refunded:lower") == ("refunded", True)
+    assert parse_guardrail("revenue:higher") == ("revenue", False)
+    assert parse_guardrail(" revenue ") == ("revenue", False)
+    assert parse_guardrail("time:on:page:LOWER") == ("time:on:page", True)
+    assert parse_guardrail("ratio:x") == ("ratio:x", False)
 
 
 def test_text_booleans_categorical_covariates_and_multiple_arms():

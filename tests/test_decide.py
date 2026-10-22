@@ -1,4 +1,4 @@
-from causalpilot.decide import EXTEND, HOLD, SHIP, decide
+from causalpilot.decide import EXTEND, HOLD, SHIP, GuardrailHarm, decide
 
 BASE = dict(metric="conversion", min_effect=0.01, srm_p=0.5, sample_factor=2.0)
 
@@ -14,7 +14,19 @@ def test_srm_blocks_everything():
 
 
 def test_guardrail_harm_blocks_a_win():
-    assert call(effect=0.05, ci_low=0.04, ci_high=0.06, harmed_guardrails=("refunds",)) == HOLD
+    order_value_down = GuardrailHarm("order_value", -2.1, -0.4)
+    v = decide(**BASE, effect=0.05, ci_low=0.04, ci_high=0.06, harmed_guardrails=(order_value_down,))
+    assert v.call == HOLD
+    assert "order_value went down" in v.reasons[0]
+
+
+def test_rising_lower_is_better_guardrail_blocks_a_win():
+    refunds_up = GuardrailHarm("refunds", 0.022, 0.029, lower_is_better=True, unit="%")
+    v = decide(**BASE, effect=0.05, ci_low=0.04, ci_high=0.06, harmed_guardrails=(refunds_up,))
+    assert v.call == HOLD
+    assert "(refunds)" in v.headline
+    assert "refunds went up, and lower is better" in v.reasons[0]
+    assert "+2.20 pp to +2.90 pp lies entirely above zero" in v.reasons[0]
 
 
 def test_clear_win_ships():

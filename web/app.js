@@ -47,6 +47,34 @@ function ticked(container) {
   return [...container.querySelectorAll("input:checked")].map((i) => i.value);
 }
 
+// Only a starting guess for the direction; the user sees it and can change it.
+const LOWER_IS_BETTER = /(refund|return|cancel|churn|unsubscri|complain|error|crash|latency|bounce)/i;
+
+function guardrailState() {
+  const state = new Map();
+  for (const row of $("guardrails").querySelectorAll(".guardrail")) {
+    const box = row.querySelector("input");
+    state.set(box.value, { checked: box.checked, direction: row.querySelector("select").value });
+  }
+  return state;
+}
+
+function guardrailRows(container, names, state) {
+  container.innerHTML = names.length
+    ? names.map((n) => {
+      const old = state.get(n);
+      const lower = old ? old.direction === "lower" : LOWER_IS_BETTER.test(n);
+      return `<span class="guardrail"><label><input type="checkbox" value="${esc(n)}"${old?.checked ? " checked" : ""}>${esc(n)}</label>
+        <select aria-label="Which way is better for ${esc(n)}"><option value="higher">higher is better</option>
+        <option value="lower"${lower ? " selected" : ""}>lower is better</option></select></span>`;
+    }).join("")
+    : '<span class="hint">none available</span>';
+}
+
+function chosenGuardrails() {
+  return [...guardrailState()].filter(([, g]) => g.checked).map(([name, g]) => `${name}:${g.direction}`);
+}
+
 function refreshControls() {
   const group = $("group").value;
   const arms = [...new Set(data.columns[group].filter((v) => v !== ""))];
@@ -66,8 +94,10 @@ function refreshLists() {
   const numeric = others.filter((h) => isNumeric(data.columns[h]));
   const keepMetrics = ticked($("metrics"));
   const keepCov = ticked($("covariates"));
+  const keepGuardrails = guardrailState();
   const idLike = (h) => /(^id$|_id$|^day$|^date$)/i.test(h);
   checkboxes($("metrics"), numeric.filter((h) => !idLike(h)), keepMetrics);
+  guardrailRows($("guardrails"), numeric.filter((h) => !idLike(h)), keepGuardrails);
   const guessCov = others.filter((h) => /^(prior|pre_|history|past|baseline|segment|country|platform|channel|recency)/i.test(h));
   checkboxes($("covariates"), others.filter((h) => !idLike(h)), keepCov.length ? keepCov : guessCov);
 }
@@ -199,6 +229,7 @@ function run(scroll = true) {
     control: $("control").value,
     metrics: [metric, ...ticked($("metrics")).filter((m) => m !== metric)],
     covariates: ticked($("covariates")).filter((c) => c !== metric),
+    guardrails: chosenGuardrails(),
     minLift: Number($("min-lift").value) / 100,
     alpha: Number($("alpha").value),
     peeking: $("peeking").checked,

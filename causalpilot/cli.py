@@ -41,7 +41,12 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--treatment", action="append", help="treatment arm(s) to compare; default: all others")
     a.add_argument("--metric", action="append", required=True, help="outcome column; the first one decides")
     a.add_argument("--covariate", action="append", default=[], help="pre-experiment column for CUPED")
-    a.add_argument("--guardrail", action="append", default=[], help="metric that must not get worse")
+    a.add_argument(
+        "--guardrail",
+        action="append",
+        default=[],
+        help="metric that must not get worse; higher is better unless you add :lower, e.g. refunded:lower",
+    )
     a.add_argument("--split", help='planned split, e.g. "50:50" (control first) or "control=1,treatment=1"')
     _add_analysis_options(a)
 

@@ -76,12 +76,12 @@
        "ci_high": 0.015954878177767758,
        "p_value": 0.3988245039058211,
        "theta": {
-        "prior_orders": 0.0672701300225719,
-        "segment=loyalists": 0.03203972831012574,
-        "segment=new_arrivals": -0.0176169856354791,
-        "segment=trend_seekers": 0.028619415550261106
+        "prior_orders": 0.06727013002257187,
+        "segment=loyalists": 0.03203972831012577,
+        "segment=new_arrivals": -0.017616985635479115,
+        "segment=trend_seekers": 0.028619415550261144
        },
-       "variance_reduction": 0.059271783249267296
+       "variance_reduction": 0.05927178324926752
       },
       "always_valid": {
        "ci_low": -0.012471045107752102,
@@ -110,22 +110,22 @@
        "ci_high": 0.23176666547877173
       },
       "cuped": {
-       "effect": 0.22317342787061278,
+       "effect": 0.22317342787061323,
        "se": 0.25967274097585546,
-       "ci_low": -0.2857757922088622,
-       "ci_high": 0.7321226479500877,
-       "p_value": 0.39009719895111616,
+       "ci_low": -0.28577579220886173,
+       "ci_high": 0.7321226479500882,
+       "p_value": 0.3900971989511152,
        "theta": {
-        "prior_orders": 2.234442877027522,
+        "prior_orders": 2.2344428770275218,
         "segment=loyalists": 1.4460757303078529,
-        "segment=new_arrivals": -0.7156677672028479,
-        "segment=trend_seekers": 1.4144260423855606
+        "segment=new_arrivals": -0.7156677672028499,
+        "segment=trend_seekers": 1.4144260423855588
        },
        "variance_reduction": 0.03506840927529109
       },
       "always_valid": {
-       "ci_low": -0.5649876100949478,
-       "ci_high": 1.0113344658361734
+       "ci_low": -0.5649876100949474,
+       "ci_high": 1.0113344658361738
       },
       "used": "cuped"
      }
@@ -162,7 +162,10 @@
    "covariates": [],
    "covariate_columns": [],
    "guardrails": [
-    "converted"
+    {
+     "metric": "converted",
+     "lower_is_better": false
+    }
    ],
    "alpha": 0.05,
    "min_lift": 0.1,
@@ -259,7 +262,9 @@
     }
    }
   ],
-  "notes": [],
+  "notes": [
+   "Guardrails, where a clear move the wrong way blocks a ship: converted must not go down (higher is better)."
+  ],
   "source": "synthetic_example.csv"
  },
  "unequal_split_alpha": {
@@ -328,25 +333,25 @@
        "ci_high": 0.16615947070725984
       },
       "cuped": {
-       "effect": 0.005151915935122389,
-       "se": 0.005704433549749911,
-       "ci_low": -0.004231042278887409,
-       "ci_high": 0.014534874149132187,
-       "p_value": 0.3664503114481251,
+       "effect": 0.005151915935122375,
+       "se": 0.0057044335497499115,
+       "ci_low": -0.004231042278887424,
+       "ci_high": 0.014534874149132175,
+       "p_value": 0.36645031144812645,
        "theta": {
-        "prior_orders": 0.06978745373862492
+        "prior_orders": 0.0697874537386249
        },
        "variance_reduction": 0.054699580626269895
       },
       "always_valid": {
-       "ci_low": -0.010614787987681836,
-       "ci_high": 0.020918619857926615
+       "ci_low": -0.01061478798768185,
+       "ci_high": 0.0209186198579266
       },
       "used": "cuped"
      }
     ],
     "min_effect": 0.0018476953907815633,
-    "sample_factor": 58.929457816962106,
+    "sample_factor": 58.92945781696212,
     "verdict": {
      "call": "hold",
      "headline": "Do not trust this result yet: the groups are not the size the design says.",
@@ -362,5 +367,244 @@
    "CUPED is only unbiased if the covariates were measured before assignment (prior_orders)."
   ],
   "source": "synthetic_example.csv"
+ },
+ "refunds_rise_lower_is_better": {
+  "settings": {
+   "group": "arm",
+   "control": "control",
+   "treatments": [
+    "treatment"
+   ],
+   "metrics": [
+    "converted"
+   ],
+   "primary_metric": "converted",
+   "covariates": [],
+   "covariate_columns": [],
+   "guardrails": [
+    {
+     "metric": "refunded",
+     "lower_is_better": true
+    }
+   ],
+   "alpha": 0.05,
+   "min_lift": 0.05,
+   "peeking": false,
+   "planned_n": null,
+   "split": {
+    "treatment": 1.0,
+    "control": 1.0
+   }
+  },
+  "rows": 6000,
+  "srm": {
+   "observed": {
+    "treatment": 2935,
+    "control": 3065
+   },
+   "expected": {
+    "treatment": 3000.0,
+    "control": 3000.0
+   },
+   "chi_square": 2.816666666666667,
+   "df": 1,
+   "p_value": 0.09328995618360462
+  },
+  "comparisons": [
+   {
+    "treatment": "treatment",
+    "metrics": [
+     {
+      "metric": "converted",
+      "binary": true,
+      "n_treatment": 2935,
+      "n_control": 3065,
+      "dropped_missing": 0,
+      "mean_treatment": 0.11652470187393527,
+      "mean_control": 0.08874388254486133,
+      "raw": {
+       "effect": 0.027780819329073933,
+       "se": 0.007840954844530342,
+       "ci_low": 0.012412830229389608,
+       "ci_high": 0.04314880842875826,
+       "p_value": 0.0003955421901478188
+      },
+      "relative": {
+       "lift": 0.31304489427798377,
+       "ci_low": 0.114776187925,
+       "ci_high": 0.5113136006309675
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": 0.003981882691821207,
+       "ci_high": 0.05157975596632666
+      },
+      "used": "raw"
+     },
+     {
+      "metric": "refunded",
+      "binary": true,
+      "n_treatment": 2935,
+      "n_control": 3065,
+      "dropped_missing": 0,
+      "mean_treatment": 0.035093696763202724,
+      "mean_control": 0.013376835236541599,
+      "raw": {
+       "effect": 0.021716861526661125,
+       "se": 0.003981041549498269,
+       "ci_low": 0.013914163468686989,
+       "ci_high": 0.02951955958463526,
+       "p_value": 4.89534738129076e-08
+      },
+      "relative": {
+       "lift": 1.6234678190052767,
+       "ci_low": 0.6831454601424115,
+       "ci_high": 2.563790177868142
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": 0.009633568424562571,
+       "ci_high": 0.03380015462875968
+      },
+      "used": "raw"
+     }
+    ],
+    "min_effect": 0.004437194127243067,
+    "sample_factor": 24.5091766014513,
+    "verdict": {
+     "call": "hold",
+     "headline": "The change clearly hurts a guardrail metric (refunded).",
+     "reasons": [
+      "refunded went up, and lower is better: the 95% interval +1.39 pp to +2.95 pp lies entirely above zero."
+     ]
+    }
+   }
+  ],
+  "notes": [
+   "Guardrails, where a clear move the wrong way blocks a ship: refunded must not go up (lower is better).",
+   "These intervals assume the sample size was fixed in advance and the results were read once. If you checked repeatedly and would have stopped on a good day, rerun with --peeking, which uses intervals that stay valid under continuous monitoring."
+  ],
+  "source": "refunds.csv"
+ },
+ "refunds_rise_lower_is_better_peeking": {
+  "settings": {
+   "group": "arm",
+   "control": "control",
+   "treatments": [
+    "treatment"
+   ],
+   "metrics": [
+    "converted"
+   ],
+   "primary_metric": "converted",
+   "covariates": [],
+   "covariate_columns": [],
+   "guardrails": [
+    {
+     "metric": "refunded",
+     "lower_is_better": true
+    },
+    {
+     "metric": "converted",
+     "lower_is_better": false
+    }
+   ],
+   "alpha": 0.05,
+   "min_lift": 0.05,
+   "peeking": true,
+   "planned_n": null,
+   "split": {
+    "treatment": 1.0,
+    "control": 1.0
+   }
+  },
+  "rows": 6000,
+  "srm": {
+   "observed": {
+    "treatment": 2935,
+    "control": 3065
+   },
+   "expected": {
+    "treatment": 3000.0,
+    "control": 3000.0
+   },
+   "chi_square": 2.816666666666667,
+   "df": 1,
+   "p_value": 0.09328995618360462
+  },
+  "comparisons": [
+   {
+    "treatment": "treatment",
+    "metrics": [
+     {
+      "metric": "converted",
+      "binary": true,
+      "n_treatment": 2935,
+      "n_control": 3065,
+      "dropped_missing": 0,
+      "mean_treatment": 0.11652470187393527,
+      "mean_control": 0.08874388254486133,
+      "raw": {
+       "effect": 0.027780819329073933,
+       "se": 0.007840954844530342,
+       "ci_low": 0.012412830229389608,
+       "ci_high": 0.04314880842875826,
+       "p_value": 0.0003955421901478188
+      },
+      "relative": {
+       "lift": 0.31304489427798377,
+       "ci_low": 0.114776187925,
+       "ci_high": 0.5113136006309675
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": 0.003981882691821207,
+       "ci_high": 0.05157975596632666
+      },
+      "used": "raw"
+     },
+     {
+      "metric": "refunded",
+      "binary": true,
+      "n_treatment": 2935,
+      "n_control": 3065,
+      "dropped_missing": 0,
+      "mean_treatment": 0.035093696763202724,
+      "mean_control": 0.013376835236541599,
+      "raw": {
+       "effect": 0.021716861526661125,
+       "se": 0.003981041549498269,
+       "ci_low": 0.013914163468686989,
+       "ci_high": 0.02951955958463526,
+       "p_value": 4.89534738129076e-08
+      },
+      "relative": {
+       "lift": 1.6234678190052767,
+       "ci_low": 0.6831454601424115,
+       "ci_high": 2.563790177868142
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": 0.009633568424562571,
+       "ci_high": 0.03380015462875968
+      },
+      "used": "raw"
+     }
+    ],
+    "min_effect": 0.004437194127243067,
+    "sample_factor": 24.5091766014513,
+    "verdict": {
+     "call": "hold",
+     "headline": "The change clearly hurts a guardrail metric (refunded).",
+     "reasons": [
+      "refunded went up, and lower is better: the always-valid 95% interval +0.96 pp to +3.38 pp lies entirely above zero."
+     ]
+    }
+   }
+  ],
+  "notes": [
+   "Guardrails, where a clear move the wrong way blocks a ship: refunded must not go up (lower is better); converted must not go down (higher is better)."
+  ],
+  "source": "refunds.csv"
  }
 }
