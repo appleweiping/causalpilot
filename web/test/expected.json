@@ -1,0 +1,366 @@
+{
+ "cuped_two_metrics": {
+  "settings": {
+   "group": "arm",
+   "control": "control",
+   "treatments": [
+    "treatment"
+   ],
+   "metrics": [
+    "converted",
+    "revenue"
+   ],
+   "primary_metric": "converted",
+   "covariates": [
+    "prior_orders",
+    "segment"
+   ],
+   "covariate_columns": [
+    "prior_orders",
+    "segment=loyalists",
+    "segment=new_arrivals",
+    "segment=trend_seekers"
+   ],
+   "guardrails": [],
+   "alpha": 0.05,
+   "min_lift": 0.05,
+   "peeking": false,
+   "planned_n": null,
+   "split": {
+    "treatment": 1.0,
+    "control": 1.0
+   }
+  },
+  "rows": 10000,
+  "srm": {
+   "observed": {
+    "treatment": 5010,
+    "control": 4990
+   },
+   "expected": {
+    "treatment": 5000.0,
+    "control": 5000.0
+   },
+   "chi_square": 0.04,
+   "df": 1,
+   "p_value": 0.8414805811217939
+  },
+  "comparisons": [
+   {
+    "treatment": "treatment",
+    "metrics": [
+     {
+      "metric": "converted",
+      "binary": true,
+      "n_treatment": 5010,
+      "n_control": 4990,
+      "dropped_missing": 0,
+      "mean_treatment": 0.09780439121756487,
+      "mean_control": 0.09238476953907816,
+      "raw": {
+       "effect": 0.005419621678486711,
+       "se": 0.005867109139031239,
+       "ci_low": -0.0060797009273803205,
+       "ci_high": 0.01691894428435374,
+       "p_value": 0.3556271789532003
+      },
+      "relative": {
+       "lift": 0.05866358389511639,
+       "ci_low": -0.06942566561973498,
+       "ci_high": 0.18675283340996776
+      },
+      "cuped": {
+       "effect": 0.004801353335547279,
+       "se": 0.005690678466644317,
+       "ci_low": -0.0063521715066732,
+       "ci_high": 0.015954878177767758,
+       "p_value": 0.3988245039058211,
+       "theta": {
+        "prior_orders": 0.0672701300225719,
+        "segment=loyalists": 0.03203972831012574,
+        "segment=new_arrivals": -0.0176169856354791,
+        "segment=trend_seekers": 0.028619415550261106
+       },
+       "variance_reduction": 0.059271783249267296
+      },
+      "always_valid": {
+       "ci_low": -0.012471045107752102,
+       "ci_high": 0.02207375177884666
+      },
+      "used": "cuped"
+     },
+     {
+      "metric": "revenue",
+      "binary": false,
+      "n_treatment": 5010,
+      "n_control": 4990,
+      "dropped_missing": 0,
+      "mean_treatment": 3.6191936127744517,
+      "mean_control": 3.373006012024048,
+      "raw": {
+       "effect": 0.24618760075040358,
+       "se": 0.2643454983852285,
+       "ci_low": -0.27192005555993515,
+       "ci_high": 0.7642952570607423,
+       "p_value": 0.3516932411180063
+      },
+      "relative": {
+       "lift": 0.07298759618951078,
+       "ci_low": -0.08579147309975016,
+       "ci_high": 0.23176666547877173
+      },
+      "cuped": {
+       "effect": 0.22317342787061278,
+       "se": 0.25967274097585546,
+       "ci_low": -0.2857757922088622,
+       "ci_high": 0.7321226479500877,
+       "p_value": 0.39009719895111616,
+       "theta": {
+        "prior_orders": 2.234442877027522,
+        "segment=loyalists": 1.4460757303078529,
+        "segment=new_arrivals": -0.7156677672028479,
+        "segment=trend_seekers": 1.4144260423855606
+       },
+       "variance_reduction": 0.03506840927529109
+      },
+      "always_valid": {
+       "ci_low": -0.5649876100949478,
+       "ci_high": 1.0113344658361734
+      },
+      "used": "cuped"
+     }
+    ],
+    "min_effect": 0.004619238476953908,
+    "sample_factor": 11.91228299414956,
+    "verdict": {
+     "call": "hold",
+     "headline": "The test cannot detect a worthwhile effect on converted at this traffic.",
+     "reasons": [
+      "The 95% interval -0.64 pp to +1.60 pp contains zero and is too wide to rule out the smallest change you said is worth shipping (+0.46 pp).",
+      "Detecting that change with 80% power would need about 12x the current sample, which is beyond the --max-extend limit."
+     ]
+    }
+   }
+  ],
+  "notes": [
+   "These intervals assume the sample size was fixed in advance and the results were read once. If you checked repeatedly and would have stopped on a good day, rerun with --peeking, which uses intervals that stay valid under continuous monitoring.",
+   "CUPED is only unbiased if the covariates were measured before assignment (prior_orders, segment)."
+  ],
+  "source": "synthetic_example.csv"
+ },
+ "raw_peeking_planned": {
+  "settings": {
+   "group": "arm",
+   "control": "control",
+   "treatments": [
+    "treatment"
+   ],
+   "metrics": [
+    "revenue"
+   ],
+   "primary_metric": "revenue",
+   "covariates": [],
+   "covariate_columns": [],
+   "guardrails": [
+    "converted"
+   ],
+   "alpha": 0.05,
+   "min_lift": 0.1,
+   "peeking": true,
+   "planned_n": 20000,
+   "split": {
+    "treatment": 1.0,
+    "control": 1.0
+   }
+  },
+  "rows": 10000,
+  "srm": {
+   "observed": {
+    "treatment": 5010,
+    "control": 4990
+   },
+   "expected": {
+    "treatment": 5000.0,
+    "control": 5000.0
+   },
+   "chi_square": 0.04,
+   "df": 1,
+   "p_value": 0.8414805811217939
+  },
+  "comparisons": [
+   {
+    "treatment": "treatment",
+    "metrics": [
+     {
+      "metric": "revenue",
+      "binary": false,
+      "n_treatment": 5010,
+      "n_control": 4990,
+      "dropped_missing": 0,
+      "mean_treatment": 3.6191936127744517,
+      "mean_control": 3.373006012024048,
+      "raw": {
+       "effect": 0.24618760075040358,
+       "se": 0.2643454983852285,
+       "ci_low": -0.27192005555993515,
+       "ci_high": 0.7642952570607423,
+       "p_value": 0.3516932411180063
+      },
+      "relative": {
+       "lift": 0.07298759618951078,
+       "ci_low": -0.08579147309975016,
+       "ci_high": 0.23176666547877173
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": -0.5689399078543962,
+       "ci_high": 1.0613151093552033
+      },
+      "used": "raw"
+     },
+     {
+      "metric": "converted",
+      "binary": true,
+      "n_treatment": 5010,
+      "n_control": 4990,
+      "dropped_missing": 0,
+      "mean_treatment": 0.09780439121756487,
+      "mean_control": 0.09238476953907816,
+      "raw": {
+       "effect": 0.005419621678486711,
+       "se": 0.005867109139031239,
+       "ci_low": -0.0060797009273803205,
+       "ci_high": 0.01691894428435374,
+       "p_value": 0.3556271789532003
+      },
+      "relative": {
+       "lift": 0.05866358389511639,
+       "ci_low": -0.06942566561973498,
+       "ci_high": 0.18675283340996776
+      },
+      "cuped": null,
+      "always_valid": {
+       "ci_low": -0.012672012506414643,
+       "ci_high": 0.023511255863388064
+      },
+      "used": "raw"
+     }
+    ],
+    "min_effect": 0.33730060120240485,
+    "sample_factor": 4.820779662892318,
+    "verdict": {
+     "call": "extend",
+     "headline": "Not enough data yet to tell whether revenue moves.",
+     "reasons": [
+      "The always-valid 95% interval -0.5689 to +1.061 contains zero but is too wide to rule out the smallest change you said is worth shipping (+0.3373).",
+      "Detecting that change with 80% power needs about 4.8x the current sample (3.8x more users per arm).",
+      "Decide the new end date now and look once at the end, or rerun with --peeking if you will keep checking."
+     ]
+    }
+   }
+  ],
+  "notes": [],
+  "source": "synthetic_example.csv"
+ },
+ "unequal_split_alpha": {
+  "settings": {
+   "group": "arm",
+   "control": "control",
+   "treatments": [
+    "treatment"
+   ],
+   "metrics": [
+    "converted"
+   ],
+   "primary_metric": "converted",
+   "covariates": [
+    "prior_orders"
+   ],
+   "covariate_columns": [
+    "prior_orders"
+   ],
+   "guardrails": [],
+   "alpha": 0.1,
+   "min_lift": 0.02,
+   "peeking": false,
+   "planned_n": null,
+   "split": {
+    "control": 60.0,
+    "treatment": 40.0
+   }
+  },
+  "rows": 10000,
+  "srm": {
+   "observed": {
+    "treatment": 5010,
+    "control": 4990
+   },
+   "expected": {
+    "treatment": 4000.0,
+    "control": 6000.0
+   },
+   "chi_square": 425.0416666666667,
+   "df": 1,
+   "p_value": 1.95021851139806e-94
+  },
+  "comparisons": [
+   {
+    "treatment": "treatment",
+    "metrics": [
+     {
+      "metric": "converted",
+      "binary": true,
+      "n_treatment": 5010,
+      "n_control": 4990,
+      "dropped_missing": 0,
+      "mean_treatment": 0.09780439121756487,
+      "mean_control": 0.09238476953907816,
+      "raw": {
+       "effect": 0.005419621678486711,
+       "se": 0.005867109139031239,
+       "ci_low": -0.004230914068568948,
+       "ci_high": 0.01507015742554237,
+       "p_value": 0.3556271789532003
+      },
+      "relative": {
+       "lift": 0.05866358389511639,
+       "ci_low": -0.04883230291702707,
+       "ci_high": 0.16615947070725984
+      },
+      "cuped": {
+       "effect": 0.005151915935122389,
+       "se": 0.005704433549749911,
+       "ci_low": -0.004231042278887409,
+       "ci_high": 0.014534874149132187,
+       "p_value": 0.3664503114481251,
+       "theta": {
+        "prior_orders": 0.06978745373862492
+       },
+       "variance_reduction": 0.054699580626269895
+      },
+      "always_valid": {
+       "ci_low": -0.010614787987681836,
+       "ci_high": 0.020918619857926615
+      },
+      "used": "cuped"
+     }
+    ],
+    "min_effect": 0.0018476953907815633,
+    "sample_factor": 58.929457816962106,
+    "verdict": {
+     "call": "hold",
+     "headline": "Do not trust this result yet: the groups are not the size the design says.",
+     "reasons": [
+      "Sample ratio test p = 2e-94 (threshold 0.001). Some users were lost, duplicated or assigned unevenly, and that usually biases the effect.",
+      "Check assignment and logging (bots, redirects, crashes in one arm, filters applied after assignment) before reading any metric."
+     ]
+    }
+   }
+  ],
+  "notes": [
+   "These intervals assume the sample size was fixed in advance and the results were read once. If you checked repeatedly and would have stopped on a good day, rerun with --peeking, which uses intervals that stay valid under continuous monitoring.",
+   "CUPED is only unbiased if the covariates were measured before assignment (prior_orders)."
+  ],
+  "source": "synthetic_example.csv"
+ }
+}

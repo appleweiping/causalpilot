@@ -1,0 +1,368 @@
+{
+  "settings": {
+    "group": "segment",
+    "control": "No E-Mail",
+    "treatments": [
+      "Womens E-Mail",
+      "Mens E-Mail"
+    ],
+    "metrics": [
+      "spend",
+      "visit",
+      "conversion"
+    ],
+    "primary_metric": "spend",
+    "covariates": [
+      "recency",
+      "history",
+      "mens",
+      "womens",
+      "newbie",
+      "zip_code",
+      "channel"
+    ],
+    "covariate_columns": [
+      "recency",
+      "history",
+      "mens",
+      "womens",
+      "newbie",
+      "zip_code=Surburban",
+      "zip_code=Urban",
+      "channel=Phone",
+      "channel=Web"
+    ],
+    "guardrails": [],
+    "alpha": 0.05,
+    "min_lift": 0.05,
+    "peeking": false,
+    "planned_n": null,
+    "split": {
+      "Womens E-Mail": 1.0,
+      "No E-Mail": 1.0,
+      "Mens E-Mail": 1.0
+    }
+  },
+  "rows": 64000,
+  "srm": {
+    "observed": {
+      "Womens E-Mail": 21387,
+      "No E-Mail": 21306,
+      "Mens E-Mail": 21307
+    },
+    "expected": {
+      "Womens E-Mail": 21333.333333333332,
+      "No E-Mail": 21333.333333333332,
+      "Mens E-Mail": 21333.333333333332
+    },
+    "chi_square": 0.20253125000000002,
+    "df": 2,
+    "p_value": 0.9036929575604195
+  },
+  "comparisons": [
+    {
+      "treatment": "Womens E-Mail",
+      "metrics": [
+        {
+          "metric": "spend",
+          "binary": false,
+          "n_treatment": 21387,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 1.0772015710478329,
+          "mean_control": 0.6527893551112361,
+          "raw": {
+            "effect": 0.4244122159365967,
+            "se": 0.13033285852919116,
+            "ci_low": 0.1689645072172281,
+            "ci_high": 0.6798599246559653,
+            "p_value": 0.0011284596637324714
+          },
+          "relative": {
+            "lift": 0.6501518638646862,
+            "ci_low": 0.14912759730109293,
+            "ci_high": 1.1511761304282793
+          },
+          "cuped": {
+            "effect": 0.42460022443861767,
+            "se": 0.13028158894035222,
+            "ci_low": 0.16925300226687556,
+            "ci_high": 0.6799474466103598,
+            "p_value": 0.0011176778302515078,
+            "theta": {
+              "recency": -0.04507404321789232,
+              "history": 0.0009819328497335448,
+              "mens": 0.1197056139653058,
+              "womens": 0.0946086102861579,
+              "newbie": -0.3866725379163534,
+              "zip_code=Surburban": -0.2585102865721266,
+              "zip_code=Urban": -0.09467839331524738,
+              "channel=Phone": -0.08937518344094095,
+              "channel=Web": 0.022639493434159434
+            },
+            "variance_reduction": 0.0007857606496152192
+          },
+          "always_valid": {
+            "ci_low": 0.029168374406357278,
+            "ci_high": 0.820032074470878
+          },
+          "used": "cuped"
+        },
+        {
+          "metric": "visit",
+          "binary": true,
+          "n_treatment": 21387,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 0.151400383410483,
+          "mean_control": 0.10616727682343002,
+          "raw": {
+            "effect": 0.045233106587052985,
+            "se": 0.003234462099090751,
+            "ci_low": 0.03889367736347529,
+            "ci_high": 0.051572535810630676,
+            "p_value": 1.931856561779853e-44
+          },
+          "relative": {
+            "lift": 0.42605507026691014,
+            "ci_low": 0.3543991330723563,
+            "ci_high": 0.49771100746146396
+          },
+          "cuped": {
+            "effect": 0.04540500764533005,
+            "se": 0.0031921042712101835,
+            "ci_low": 0.03914859823886162,
+            "ci_high": 0.05166141705179848,
+            "p_value": 6.487702789282791e-46,
+            "theta": {
+              "recency": -0.005710719785183085,
+              "history": 5.721625061802162e-05,
+              "mens": 0.066254917390253,
+              "womens": 0.09410214845367335,
+              "newbie": -0.06150503859669147,
+              "zip_code=Surburban": -0.044118737136232634,
+              "zip_code=Urban": -0.04779037623368415,
+              "channel=Phone": -0.009806703898313436,
+              "channel=Web": 0.02139363333734538
+            },
+            "variance_reduction": 0.02586319455054642
+          },
+          "always_valid": {
+            "ci_low": 0.03571630406313447,
+            "ci_high": 0.055093711227525634
+          },
+          "used": "cuped"
+        },
+        {
+          "metric": "conversion",
+          "binary": true,
+          "n_treatment": 21387,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 0.008837144059475383,
+          "mean_control": 0.005726086548390125,
+          "raw": {
+            "effect": 0.003111057511085258,
+            "se": 0.0008226770775551195,
+            "ci_low": 0.0014986400681705591,
+            "ci_high": 0.004723474953999956,
+            "p_value": 0.00015580695663629506
+          },
+          "relative": {
+            "lift": 0.5433130436982172,
+            "ci_low": 0.19323248394619857,
+            "ci_high": 0.8933936034502359
+          },
+          "cuped": {
+            "effect": 0.003112121813373135,
+            "se": 0.0008219383567450597,
+            "ci_low": 0.0015011522366407837,
+            "ci_high": 0.0047230913901054866,
+            "p_value": 0.00015289462642271724,
+            "theta": {
+              "recency": -0.0004885808975879647,
+              "history": 6.710967601565133e-06,
+              "mens": 0.0016648221997260977,
+              "womens": 0.003586378515626559,
+              "newbie": -0.0029035999945542313,
+              "zip_code=Surburban": -0.003619764659164296,
+              "zip_code=Urban": -0.002506902200058978,
+              "channel=Phone": -0.0013421519770905504,
+              "channel=Web": -0.000138774304632038
+            },
+            "variance_reduction": 0.0017937292280761907
+          },
+          "always_valid": {
+            "ci_low": 0.0006173671234454463,
+            "ci_high": 0.005606876503300824
+          },
+          "used": "cuped"
+        }
+      ],
+      "min_effect": 0.032639467755561806,
+      "sample_factor": 125.05113317612116,
+      "verdict": {
+        "call": "ship",
+        "headline": "spend improves by more than the minimum worthwhile change.",
+        "reasons": [
+          "Even the low end of the 95% interval +0.1693 to +0.6799 clears the smallest change you said is worth shipping (+0.03264)."
+        ]
+      }
+    },
+    {
+      "treatment": "Mens E-Mail",
+      "metrics": [
+        {
+          "metric": "spend",
+          "binary": false,
+          "n_treatment": 21307,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 1.422616511005773,
+          "mean_control": 0.6527893551112361,
+          "raw": {
+            "effect": 0.7698271558945368,
+            "se": 0.14524656024868676,
+            "ci_low": 0.4851491289287837,
+            "ci_high": 1.0545051828602898,
+            "p_value": 1.1571368879646362e-07
+          },
+          "relative": {
+            "lift": 1.1792887703620063,
+            "ci_low": 0.544305719598783,
+            "ci_high": 1.8142718211252296
+          },
+          "cuped": {
+            "effect": 0.7667588782364001,
+            "se": 0.14515206451616058,
+            "ci_low": 0.4822660595030911,
+            "ci_high": 1.0512516969697092,
+            "p_value": 1.274659281282846e-07,
+            "theta": {
+              "recency": -0.05163326021857211,
+              "history": 0.0010289495535552428,
+              "mens": 1.0367985765328596,
+              "womens": 0.7997172519293406,
+              "newbie": -0.5328681307253361,
+              "zip_code=Surburban": -0.06332164436071254,
+              "zip_code=Urban": -0.18242722038340528,
+              "channel=Phone": 0.2097465635934221,
+              "channel=Web": 0.37794196228635
+            },
+            "variance_reduction": 0.0013051434062235634
+          },
+          "always_valid": {
+            "ci_low": 0.3261920270452756,
+            "ci_high": 1.2073257294275246
+          },
+          "used": "cuped"
+        },
+        {
+          "metric": "visit",
+          "binary": true,
+          "n_treatment": 21307,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 0.18275684047496127,
+          "mean_control": 0.10616727682343002,
+          "raw": {
+            "effect": 0.07658956365153125,
+            "se": 0.0033858878117283653,
+            "ci_low": 0.06995334548485052,
+            "ci_high": 0.08322578181821197,
+            "p_value": 2.740429349829803e-113
+          },
+          "relative": {
+            "lift": 0.721404616781399,
+            "ci_low": 0.6384142814095792,
+            "ci_high": 0.8043949521532188
+          },
+          "cuped": {
+            "effect": 0.07604793556136852,
+            "se": 0.0033360136062766544,
+            "ci_low": 0.0695094690411307,
+            "ci_high": 0.08258640208160634,
+            "p_value": 5.01797444149145e-115,
+            "theta": {
+              "recency": -0.006756951598045024,
+              "history": 5.878634679806351e-05,
+              "mens": 0.10017165707403644,
+              "womens": 0.09713269763356464,
+              "newbie": -0.0685361600143756,
+              "zip_code=Surburban": -0.05297993943118102,
+              "zip_code=Urban": -0.0534049936597397,
+              "channel=Phone": -0.007704771756223314,
+              "channel=Web": 0.023785506768557976
+            },
+            "variance_reduction": 0.029063333692070148
+          },
+          "always_valid": {
+            "ci_low": 0.06592243707158012,
+            "ci_high": 0.08617343405115692
+          },
+          "used": "cuped"
+        },
+        {
+          "metric": "conversion",
+          "binary": true,
+          "n_treatment": 21307,
+          "n_control": 21306,
+          "dropped_missing": 0,
+          "mean_treatment": 0.01253109306800582,
+          "mean_control": 0.005726086548390125,
+          "raw": {
+            "effect": 0.006805006519615695,
+            "se": 0.0009208727857351216,
+            "ci_low": 0.005000129025231787,
+            "ci_high": 0.008609884013999603,
+            "p_value": 1.4712093247956603e-13
+          },
+          "relative": {
+            "lift": 1.188421876286328,
+            "ci_low": 0.7215314183591646,
+            "ci_high": 1.6553123342134912
+          },
+          "cuped": {
+            "effect": 0.00677248317677236,
+            "se": 0.0009198281770529727,
+            "ci_low": 0.004969653077783402,
+            "ci_high": 0.008575313275761318,
+            "p_value": 1.8013277995068972e-13,
+            "theta": {
+              "recency": -0.0005287977851157768,
+              "history": 9.2649113690982e-06,
+              "mens": 0.006017619525112775,
+              "womens": 0.005541191265448398,
+              "newbie": -0.004831640812438741,
+              "zip_code=Surburban": -0.0021221784444066787,
+              "zip_code=Urban": -0.0019627676964766422,
+              "channel=Phone": 0.00024003837465787583,
+              "channel=Web": 0.0015011666960674773
+            },
+            "variance_reduction": 0.002276758223197395
+          },
+          "always_valid": {
+            "ci_low": 0.003980612424179778,
+            "ci_high": 0.009564353929364942
+          },
+          "used": "cuped"
+        }
+      ],
+      "min_effect": 0.032639467755561806,
+      "sample_factor": 155.22725323868235,
+      "verdict": {
+        "call": "ship",
+        "headline": "spend improves by more than the minimum worthwhile change.",
+        "reasons": [
+          "Even the low end of the 95% interval +0.4823 to +1.051 clears the smallest change you said is worth shipping (+0.03264)."
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "2 treatments are compared with the same control. Each interval is a separate 95% interval; for a stricter family-wide error rate use --alpha 0.025.",
+    "These intervals assume the sample size was fixed in advance and the results were read once. If you checked repeatedly and would have stopped on a good day, rerun with --peeking, which uses intervals that stay valid under continuous monitoring.",
+    "CUPED is only unbiased if the covariates were measured before assignment (recency, history, mens, womens, newbie, zip_code, channel)."
+  ],
+  "source": "Hillstrom MineThatData e-mail test (2008)"
+}

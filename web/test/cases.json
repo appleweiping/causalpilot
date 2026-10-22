@@ -1,0 +1,14 @@
+[
+  {
+    "name": "cuped_two_metrics",
+    "settings": {"group": "arm", "control": "control", "metrics": ["converted", "revenue"], "covariates": ["prior_orders", "segment"], "min_lift": 0.05}
+  },
+  {
+    "name": "raw_peeking_planned",
+    "settings": {"group": "arm", "control": "control", "metrics": ["revenue"], "guardrails": ["converted"], "min_lift": 0.10, "peeking": true, "planned_n": 20000}
+  },
+  {
+    "name": "unequal_split_alpha",
+    "settings": {"group": "arm", "control": "control", "metrics": ["converted"], "covariates": ["prior_orders"], "split": "60:40", "alpha": 0.1, "min_lift": 0.02}
+  }
+]

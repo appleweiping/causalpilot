@@ -1,8 +1,9 @@
-name: Deploy static control room
+name: Pages
 
 on:
   push:
     branches: [main]
+    paths: ["web/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -15,46 +16,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - uses: actions/configure-pages@v5
-      - name: Install
-        working-directory: frontend
-        run: npm ci
-      - name: Audit all installed dependencies
-        working-directory: frontend
-        run: npm audit --audit-level=high
-      - name: Export static demo
-        working-directory: frontend
-        env:
-          STATIC_EXPORT: "true"
-          BASE_PATH: /causalpilot
-          NEXT_PUBLIC_API_BASE_URL: offline
-        run: npm run build
-      - name: Disable Jekyll processing
-        run: touch frontend/out/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: frontend/out
-
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: build
     steps:
-      - name: Deploy
-        id: deployment
+      - uses: actions/checkout@v4
+      - name: Keep only the files the page needs
+        run: |
+          mkdir site
+          cp web/index.html web/app.js web/causalpilot.js web/style.css web/synthetic_example.csv site/
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
         uses: actions/deploy-pages@v4

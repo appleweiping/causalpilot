@@ -8,81 +8,33 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  backend-and-evaluation:
+  python:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.13"]
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: backend/pyproject.toml
-      - name: Upgrade audited packaging tools
-        run: python -m pip install --upgrade 'pip>=26.1.2' 'setuptools>=83'
-      - name: Install backend and test tools
-        run: python -m pip install -e './backend[test]'
-      - name: Audit Python dependencies
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e ".[test]"
+      - run: python -m pytest
+      - name: Command line smoke test
         run: |
-          python -m pip install 'pip-audit>=2.9,<3'
-          python -m pip_audit
-      - name: Test backend and benchmark
-        run: python -m pytest backend/tests evaluation/tests
-      - name: Verify benchmark artifact reproducibility
-        run: |
-          python evaluation/run_benchmark.py
-          if [ -n "$(git status --porcelain -- evaluation/results)" ]; then
-            git diff -- evaluation/results
-            git status --short -- evaluation/results
-            exit 1
-          fi
+          causalpilot simulate /tmp/test.csv --n 20000 --lift 0.1
+          causalpilot analyze /tmp/test.csv --group arm --control control --metric converted --covariate prior_orders --out /tmp/report
+          test -s /tmp/report/effects.png
+      - name: Benchmark smoke run
+        run: python benchmark/run_benchmark.py --runs 2 --out /tmp/bench
 
-  frontend:
+  browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-      - name: Audit all installed dependencies
-        working-directory: frontend
-        run: npm audit --audit-level=high
-      - name: Lint
-        working-directory: frontend
-        run: npm run lint
-      - name: Type check
-        working-directory: frontend
-        run: npm run typecheck
-      - name: Unit tests
-        working-directory: frontend
-        run: npm test
-      - name: Production build
-        working-directory: frontend
-        run: npm run build
-
-  container-build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - name: Validate Compose configuration
-        run: docker compose config --quiet
-      - name: Build API and web images
-        run: docker compose build
+      - name: Browser version gives the same numbers as Python
+        run: node --test web/test/parity.test.mjs

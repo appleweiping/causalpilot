@@ -1,0 +1,21 @@
+scenario,true_lift,rule,runs,ship_rate,hold_rate,extend_rate,mean_days
+harmful (-10%),-0.1000,"p<0.05, one look",200,0.0000,0.0000,0.0000,14.0000
+harmful (-10%),-0.1000,"p<0.05, daily looks",200,0.0050,0.0000,0.0000,13.9500
+harmful (-10%),-0.1000,"causalpilot, one look",200,0.0000,0.9650,0.0350,14.0000
+harmful (-10%),-0.1000,"causalpilot, daily (--peeking)",200,0.0000,0.6700,0.3300,10.6050
+no effect,0.0000,"p<0.05, one look",200,0.0150,0.0000,0.0000,14.0000
+no effect,0.0000,"p<0.05, daily looks",200,0.1100,0.0000,0.0000,12.9650
+no effect,0.0000,"causalpilot, one look",200,0.0150,0.8350,0.1500,14.0000
+no effect,0.0000,"causalpilot, daily (--peeking)",200,0.0050,0.1550,0.8400,13.8500
+too small (+3%),0.0300,"p<0.05, one look",200,0.0800,0.0000,0.0000,14.0000
+too small (+3%),0.0300,"p<0.05, daily looks",200,0.2150,0.0000,0.0000,12.2700
+too small (+3%),0.0300,"causalpilot, one look",200,0.0950,0.6400,0.2650,14.0000
+too small (+3%),0.0300,"causalpilot, daily (--peeking)",200,0.0200,0.0950,0.8850,13.7650
+worthwhile (+15%),0.1500,"p<0.05, one look",200,1.0000,0.0000,0.0000,14.0000
+worthwhile (+15%),0.1500,"p<0.05, daily looks",200,1.0000,0.0000,0.0000,3.7050
+worthwhile (+15%),0.1500,"causalpilot, one look",200,1.0000,0.0000,0.0000,14.0000
+worthwhile (+15%),0.1500,"causalpilot, daily (--peeking)",200,0.9550,0.0100,0.0350,7.2800
+no effect + logging bug,0.0000,"p<0.05, one look",200,0.6600,0.0000,0.0000,14.0000
+no effect + logging bug,0.0000,"p<0.05, daily looks",200,0.7850,0.0000,0.0000,8.3400
+no effect + logging bug,0.0000,"causalpilot, one look",200,0.0000,1.0000,0.0000,14.0000
+no effect + logging bug,0.0000,"causalpilot, daily (--peeking)",200,0.0100,0.9900,0.0000,3.3700

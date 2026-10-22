@@ -1,16 +1,17 @@
 cff-version: 1.2.0
-message: "If you use CausalPilot in research, please cite this software."
-title: "CausalPilot: Evidence-Gated Agentic Experimentation"
+message: "If you use causalpilot, please cite it as below."
+title: "causalpilot: a ship / hold / extend check for A/B test exports"
 type: software
 authors:
-  - family-names: "appleweiping"
+  - family-names: "Yan"
+    given-names: "Weiping"
 repository-code: "https://github.com/appleweiping/causalpilot"
+url: "https://appleweiping.github.io/causalpilot/"
 license: MIT
-version: 0.1.0
-date-released: 2026-07-19
+version: 0.2.0
+date-released: 2026-10-22
 keywords:
-  - agentic-ai
-  - causal-inference
-  - risk-aware-decision-making
-  - experimentation
-  - human-ai-collaboration
+  - ab-testing
+  - cuped
+  - sample-ratio-mismatch
+  - sequential-testing

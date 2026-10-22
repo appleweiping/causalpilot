@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "causalpilot"
+version = "0.2.0"
+description = "Check an A/B test export for sample ratio mismatch, estimate the effect with CUPED, and get a ship/hold/extend call."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Weiping Yan" }]
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=1.5",
+  "matplotlib>=3.6",
+]
+keywords = ["ab-testing", "experimentation", "cuped", "statistics", "sequential-testing"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7", "scipy>=1.10"]
+
+[project.scripts]
+causalpilot = "causalpilot.cli:main"
+
+[project.urls]
+Homepage = "https://appleweiping.github.io/causalpilot/"
+Source = "https://github.com/appleweiping/causalpilot"
+
+[tool.hatch.build.targets.wheel]
+packages = ["causalpilot"]
+
+[tool.hatch.build.targets.sdist]
+include = ["causalpilot", "tests", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

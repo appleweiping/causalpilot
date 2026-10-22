@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>causalpilot: A/B test check</title>
+  <meta name="description" content="Check an A/B test export for sample ratio mismatch, estimate the effect with CUPED and get a ship / hold / extend call. Runs in your browser.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>causalpilot</h1>
+    <p class="lede">Drop in an A/B test export (one row per user) and get a sample ratio check, a CUPED-adjusted
+      effect with its interval, and a plain <b>ship / hold / extend</b> call. The file never leaves this page.</p>
+    <p class="links"><a href="https://github.com/appleweiping/causalpilot">Source and command-line version</a> ·
+      <a href="https://github.com/appleweiping/causalpilot/blob/main/examples/hillstrom/report.md">Example report on the Hillstrom e-mail test</a></p>
+  </header>
+
+  <main>
+    <section id="load" class="card">
+      <h2>1. Data</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".csv,text/csv">
+        <span>Choose a CSV file or drop it here</span>
+      </label>
+      <p class="hint">Or <button type="button" id="example" class="link">load the synthetic example</button>
+        (10,000 simulated shoppers, true lift in conversion +15%).</p>
+      <p id="file-info" class="hint"></p>
+    </section>
+
+    <section id="setup" class="card" hidden>
+      <h2>2. What was tested</h2>
+      <div class="grid">
+        <label>Group column <select id="group"></select></label>
+        <label>Control arm <select id="control"></select></label>
+        <label>Primary metric (decides the call) <select id="metric"></select></label>
+        <label>Smallest lift worth shipping (% of control)
+          <input id="min-lift" type="number" step="0.5" min="0" value="1"></label>
+        <label>Alpha <input id="alpha" type="number" step="0.01" min="0.001" max="0.5" value="0.05"></label>
+        <label>Planned number of users (optional) <input id="planned" type="number" min="0" placeholder="e.g. 40000"></label>
+      </div>
+      <fieldset>
+        <legend>Other metrics to report</legend>
+        <div id="metrics" class="checks"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Covariates for CUPED (only columns measured <em>before</em> the test started)</legend>
+        <div id="covariates" class="checks"></div>
+      </fieldset>
+      <label class="inline"><input type="checkbox" id="peeking"> I looked at the results more than once while the test ran</label>
+      <button type="button" id="run" class="primary">Analyze</button>
+      <p id="error" class="error" role="alert"></p>
+    </section>
+
+    <section id="results" hidden></section>
+  </main>
+
+  <footer>
+    <p>Same maths as the <code>causalpilot</code> Python package; a test checks both give identical numbers.
+      Intervals use the normal approximation. Always-valid intervals follow Waudby-Smith et al. (2021).</p>
+  </footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
