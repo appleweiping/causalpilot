@@ -1,6 +1,6 @@
 # causalpilot
 
-Reads an A/B test export, checks the traffic split, estimates the effect with CUPED and says whether to **ship, hold or keep the test running**. Give it a CSV with one row per user; it explains every call in plain words, on the command line or [in the browser](https://appleweiping.github.io/causalpilot/).
+Reads an A/B test export, checks the traffic split, estimates the effect with CUPED and says whether to **ship, hold or keep the test running**, for analysts and engineers who have per-user test data but no experimentation platform. Give it a CSV with one row per user; it explains every call in plain words, on the command line or [in the browser](https://appleweiping.github.io/causalpilot/).
 
 [Try it in the browser](https://appleweiping.github.io/causalpilot/) (your file stays on your machine) · [Report on a real e-mail experiment](examples/hillstrom/report.md) · [Simulation benchmark](benchmark/results.md)
 
