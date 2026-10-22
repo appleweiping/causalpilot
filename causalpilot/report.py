@@ -195,15 +195,16 @@ def plot(result: dict, path: str | Path) -> None:
         ax.axvline(sign * s["min_lift"] * 100, color="#555555", linewidth=0.8, linestyle=":")
     ax.set_xlabel("Lift relative to control mean (%)")
     tag = "CUPED-adjusted" if s["covariates"] else "unadjusted"
-    ax.set_title(
-        f"{result.get('source', '')}\n"
-        f"coloured: {tag} {100 * (1 - s['alpha']):.0f}% interval (green ship, red hold, amber extend); "
+    title = [
+        f"coloured: {tag} {100 * (1 - s['alpha']):.0f}% interval (green ship, red hold, amber extend)",
         "grey: always-valid interval; dotted: smallest worthwhile lift",
-        fontsize=8,
-    )
+    ]
+    if result.get("source"):
+        title.insert(0, result["source"])
+    ax.set_title("\n".join(title), fontsize=8)
     ax.grid(axis="x", alpha=0.3)
     fig.tight_layout()
-    fig.savefig(path)
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 
