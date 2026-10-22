@@ -3,7 +3,6 @@
 > 状态：**FROZEN FOR APPLICATION MVP**
 > 版本：v0.1
 > 冻结日期：2026-07-19
-> 相关调研：[research_landscape.md](research_landscape.md)
 > 规格原则：所有“效果”都必须由当前运行或保存的评测 artifact 计算；没有结果时显示 `Not evaluated`，不得用占位数字包装成成果。
 
 ## 1. 产品定义

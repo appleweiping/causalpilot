@@ -47,7 +47,7 @@ control.
 Adapter smoke checks establish that a file can be parsed and summarized. They do
 not establish external validity, individual counterfactual truth, production
 lift, or policy safety. See `evaluation/README.md` for commands and
-`docs/research_landscape.md` for source-specific notes.
+the dataset owners' pages for source-specific notes.
 
 ## Provenance and reproducibility
 

@@ -1,6 +1,6 @@
 # CausalPilot：用证据分配 Agent 行动权
 
-[在线 90 秒控制室](https://appleweiping.github.io/causalpilot/) · [90 秒 MP4](docs/assets/causalpilot-demo.mp4) · [4 页技术报告](paper/causalpilot.pdf) · [研究调研](docs/research_landscape.md) · [申请材料包](docs/application_kit.zh-CN.md)
+[在线 90 秒控制室](https://appleweiping.github.io/causalpilot/) · [90 秒 MP4](docs/assets/causalpilot-demo.mp4) · [4 页技术报告](paper/causalpilot.pdf)
 
 ![CausalPilot 市场控制室](docs/assets/control-room-final.png)
 
@@ -52,7 +52,7 @@ docker compose up --build
 
 浏览器打开 `http://localhost:3000`，API 文档位于 `http://localhost:8000/docs`。
 
-本地开发、benchmark 复现、API 使用和数据限制请从 [文档索引](docs/README.md) 开始。演示录制按 [90 秒逐镜脚本](docs/demo_script.zh-CN.md) 执行；求职包装、自荐信主线和面试问答见 [申请材料包](docs/application_kit.zh-CN.md)。
+本地开发、benchmark 复现、API 使用和数据限制请从 [文档索引](docs/README.md) 开始。
 
 ## 诚实边界
 

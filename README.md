@@ -7,7 +7,7 @@
 
 **An evidence-gated agent for business experimentation.** CausalPilot decides when to diagnose, buy randomized evidence, ask a human, deploy one segment, pause, roll back, or abstain. The language layer may propose an action; deterministic gates own action rights.
 
-[Live 90-second control room](https://appleweiping.github.io/causalpilot/) · [90-second MP4](docs/assets/causalpilot-demo.mp4) · [Technical report](paper/causalpilot.pdf) · [中文说明](README.zh-CN.md) · [Research landscape](docs/research_landscape.md)
+[Live 90-second control room](https://appleweiping.github.io/causalpilot/) · [90-second MP4](docs/assets/causalpilot-demo.mp4) · [Technical report](paper/causalpilot.pdf) · [中文说明](README.zh-CN.md)
 
 ![CausalPilot market control room](docs/assets/control-room-final.png)
 
@@ -111,7 +111,7 @@ The runtime audit is an append-only, in-memory transition trace. It is inspectab
 | [`frontend/`](frontend/) | Next.js 16 + React Three Fiber control room with reduced-motion and static replay modes |
 | [`evaluation/`](evaluation/) | Truth-isolated benchmark, 12 policies/ablations, adapters, raw and summary artifacts |
 | [`paper/`](paper/) | Four-page report; numeric macros are generated from the canonical CSV |
-| [`docs/`](docs/) | Research, architecture, API, data card, limitations, application kit, and 90-second script |
+| [`docs/`](docs/) | Research, architecture, API, data card, limitations and limitations |
 
 Start with the [documentation index](docs/README.md), [architecture](docs/architecture.md), [data card](docs/data-card.md), and [limitations](docs/limitations.md).
 

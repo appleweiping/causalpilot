@@ -27,5 +27,5 @@ This file is the shared project memory for product, research, engineering, and r
 
 - Public GitHub repository with bilingual landing documentation.
 - One-command local run, Docker configuration, tests, lint/type checks, and CI.
-- Research landscape, product specification, 4–6 page technical report, limitations/failure cases, application kit, and a 90-second demo script/video artifact.
+- Research landscape, product specification, 4–6 page technical report and limitations/failure cases.
 - A static live demo may use the deterministic client simulator; the full backend remains available for local research runs.
